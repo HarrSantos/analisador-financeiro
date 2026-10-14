@@ -17,16 +17,3 @@ def conectar_banco():
     )
 
     return conexao
-
-conexao = conectar_banco()
-
-cursor = conexao.cursor()
-
-cursor.execute("SELECT * FROM usuario")
-
-resultado = cursor.fetchall()
-
-print(resultado)
-
-cursor.close()
-conexao.close()
