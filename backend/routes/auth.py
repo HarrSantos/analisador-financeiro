@@ -1,12 +1,13 @@
 from email_validator import validate_email, EmailNotValidError
 from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
 import mysql.connector
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from backend.database import conectar_banco
 
 auth = Blueprint("auth", __name__)
 
-
+# Rota de cadastro
 @auth.route("/api/auth/cadastro", methods=["POST"])
 def cadastrar():
     dados = request.get_json()
@@ -82,4 +83,80 @@ def cadastrar():
         if cursor is not None:
             cursor.close()
         if conexao is not None:
-            conexao.close()    
+            conexao.close()
+
+# Rota de login
+@auth.route("/api/auth/login", methods=["POST"])
+def login():
+    dados = request.get_json()
+
+    if not isinstance(dados, dict):
+        return jsonify({"erro": "Dados inválidos."}), 400
+
+    email = dados.get("email")
+    senha = dados.get("senha")
+
+    if not email or not senha:
+        return jsonify({"erro": "Preencha todos os campos."}), 400
+
+    if not isinstance(email, str) or not isinstance(senha, str):
+        return jsonify({"erro": "Dados inválidos."}), 400
+
+    email = email.strip()
+
+    if not email or not senha.strip():
+        return jsonify({"erro": "Preencha todos os campos."}), 400
+
+    cursor = None
+    conexao = None
+
+    try:
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+
+        consulta = "SELECT id, senha FROM usuario WHERE email = %s"
+        cursor.execute(consulta, (email,))
+        usuario = cursor.fetchone()
+
+        if not usuario:
+            return jsonify({"erro": "E-mail ou senha inválidos."}), 401
+
+        check_senha = check_password_hash(usuario[1], senha)
+
+        if not check_senha:
+            return jsonify({"erro": "E-mail ou senha inválidos."}), 401
+
+        session.clear()
+        session["usuario_id"] = usuario[0]
+
+        return jsonify({
+            "mensagem": "Login bem-sucedido!",
+            "usuario_id": usuario[0]
+        }), 200
+    
+    except mysql.connector.Error:
+        return jsonify({"erro": "Não foi possível realizar o login."}), 500
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conexao is not None:
+            conexao.close()
+
+# Verifica se o usuário está logado
+@auth.route("/api/auth/verificar-sessao", methods=["GET"])
+def verificar_sessao():
+    if "usuario_id" in session:
+        return jsonify({
+            "logado": True,
+            "usuario_id": session["usuario_id"]
+        }), 200
+    
+    else:
+        return jsonify({"logado": False}), 401
+
+# Logout route
+@auth.route("/api/auth/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return jsonify({"mensagem": "Logout realizado com sucesso."}), 200
