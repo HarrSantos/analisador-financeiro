@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash
 import mysql.connector
 from flask import Blueprint, request, jsonify, session
 from backend.database import conectar_banco
+from backend.security import login_required
 
 auth = Blueprint("auth", __name__)
 
@@ -128,6 +129,7 @@ def login():
 
         session.clear()
         session["usuario_id"] = usuario[0]
+        session.permanent = True
 
         return jsonify({
             "mensagem": "Login bem-sucedido!",
@@ -160,3 +162,8 @@ def verificar_sessao():
 def logout():
     session.clear()
     return jsonify({"mensagem": "Logout realizado com sucesso."}), 200
+
+@auth.route("/api/auth/rota-protegida", methods=["GET"])
+@login_required
+def rota_protegida():
+    return jsonify({"mensagem": "Acesso autorizado!"}), 200
