@@ -15,3 +15,6 @@ Thumbs.db
 
 # Configurações locais do VS Code
 .vscode/
+
+data/*
+!data/.gitkeep

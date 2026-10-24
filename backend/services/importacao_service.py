@@ -36,3 +36,8 @@ def ler_csv(conteudo: bytes) -> pd.DataFrame:
         )
 
     return df
+
+def converter_registros(df: pd.DataFrame) -> list[dict]:
+    df = df.astype(object).where(pd.notna(df), None)
+
+    return df.to_dict(orient="records")
