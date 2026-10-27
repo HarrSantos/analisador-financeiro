@@ -5,7 +5,10 @@ from backend.services.importacao_service import (
     ler_csv,
     converter_registros
 )
-from backend.services.armazenamento_service import salvar_importacao
+from backend.services.armazenamento_service import (
+    salvar_importacao,
+    listar_importacoes
+)
 
 
 importacao = Blueprint(
@@ -62,3 +65,16 @@ def importar_csv():
         "colunas": df.columns.tolist(),
         "total_registros": len(registros)
     }), 201
+    
+    
+@importacao.route("/", methods=["GET"])
+@login_required
+def listar_importacoes_usuario():
+    try:
+        importacoes = listar_importacoes(usuario_id=session["usuario_id"])
+    except Exception:
+        return jsonify({
+            "erro": "Não foi possível listar as importações do usuário."
+        }), 500
+
+    return jsonify(importacoes), 200

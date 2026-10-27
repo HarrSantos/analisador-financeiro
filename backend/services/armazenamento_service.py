@@ -56,3 +56,42 @@ def salvar_importacao(
             cursor.close()
         if conexao is not None:
             conexao.close()
+
+def listar_importacoes(usuario_id: int) -> list[dict]:
+    conexao = None
+    cursor = None
+
+    try:
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+
+        consulta = """
+            SELECT id, nome_arquivo, data_importacao
+            FROM importacao
+            WHERE usuario_id = %s
+            ORDER BY data_importacao DESC
+        """
+
+        cursor.execute(consulta, (usuario_id,))
+        resultados = cursor.fetchall()
+
+        importacoes = []
+        for resultado in resultados:
+            importacoes.append({ 
+                "id": resultado[0],
+                "nome_arquivo": resultado[1],
+                "data_importacao": resultado[2].isoformat()
+            })
+
+        return importacoes
+    
+    except Exception as erro:
+        raise RuntimeError(
+            "Não foi possível listar as importações do usuário."
+    ) from erro
+    
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conexao is not None:
+            conexao.close()
