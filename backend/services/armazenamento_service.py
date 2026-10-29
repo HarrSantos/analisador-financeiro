@@ -66,21 +66,33 @@ def listar_importacoes(usuario_id: int) -> list[dict]:
         cursor = conexao.cursor()
 
         consulta = """
-            SELECT id, nome_arquivo, data_importacao
+        SELECT
+                importacao.id,
+                importacao.nome_arquivo,
+                importacao.data_importacao,
+            COUNT(registro.id) AS total_registros
             FROM importacao
-            WHERE usuario_id = %s
-            ORDER BY data_importacao DESC
-        """
+            LEFT JOIN registro
+                ON importacao.id = registro.importacao_id
+            WHERE importacao.usuario_id = %s
+            GROUP BY
+                importacao.id,
+                importacao.nome_arquivo,
+                importacao.data_importacao
+            ORDER BY importacao.data_importacao DESC
+            """
 
         cursor.execute(consulta, (usuario_id,))
         resultados = cursor.fetchall()
 
         importacoes = []
+
         for resultado in resultados:
-            importacoes.append({ 
+            importacoes.append({
                 "id": resultado[0],
                 "nome_arquivo": resultado[1],
-                "data_importacao": resultado[2].isoformat()
+                "data_importacao": resultado[2].isoformat(),
+                "total_registros": resultado[3]
             })
 
         return importacoes
