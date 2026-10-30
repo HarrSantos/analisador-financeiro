@@ -7,7 +7,9 @@ from backend.services.importacao_service import (
 )
 from backend.services.armazenamento_service import (
     salvar_importacao,
-    listar_importacoes
+    listar_importacoes,
+    buscar_importacao,
+    deletar_importacao
 )
 
 
@@ -78,3 +80,45 @@ def listar_importacoes_usuario():
         }), 500
 
     return jsonify(importacoes), 200
+
+@importacao.route("/<int:importacao_id>", methods=["GET"])
+@login_required
+def buscar_importacao_usuario(importacao_id: int):
+    try:
+        importacao = buscar_importacao(
+            usuario_id=session["usuario_id"],
+            importacao_id=importacao_id
+        )
+    except ValueError:
+        return jsonify({
+            "erro": "Importação não encontrada."
+        }), 404
+
+    except Exception:
+        return jsonify({
+            "erro": "Não foi possível buscar a importação do usuário."
+        }), 500
+
+    return jsonify(importacao), 200
+
+@importacao.route("/<int:importacao_id>", methods=["DELETE"])
+@login_required
+def deletar_importacao_usuario(importacao_id: int):
+    try:
+        deletar_importacao(
+            usuario_id=session["usuario_id"],
+            importacao_id=importacao_id
+        )
+    except ValueError:
+        return jsonify({
+            "erro": "Importação não encontrada."
+        }), 404
+
+    except Exception:
+        return jsonify({
+            "erro": "Não foi possível deletar a importação do usuário."
+        }), 500
+
+    return jsonify({
+        "mensagem": "Importação deletada com sucesso."
+    }), 200

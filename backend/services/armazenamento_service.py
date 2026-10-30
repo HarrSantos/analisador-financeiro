@@ -107,3 +107,104 @@ def listar_importacoes(usuario_id: int) -> list[dict]:
             cursor.close()
         if conexao is not None:
             conexao.close()
+            
+
+def buscar_importacao(usuario_id: int, importacao_id: int) -> dict:
+    conexao = None
+    cursor = None
+
+    try:
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+
+        consulta = """
+            SELECT
+                importacao.id,
+                importacao.nome_arquivo,
+                importacao.data_importacao,
+                registro.numero_linha,
+                registro.dados
+            FROM importacao
+            LEFT JOIN registro
+                ON importacao.id = registro.importacao_id
+            WHERE importacao.id = %s
+                AND importacao.usuario_id = %s
+            ORDER BY registro.numero_linha
+        """
+
+        cursor.execute(consulta, (importacao_id, usuario_id))
+        resultado = cursor.fetchall()
+
+        if not resultado:
+            raise ValueError("Importação não encontrada.")
+
+        if resultado[0][3] is None:
+            return {
+                "id": resultado[0][0],
+                "nome_arquivo": resultado[0][1],
+                "data_importacao": resultado[0][2].isoformat(),
+                "registros": []
+            }
+
+        return {
+            "id": resultado[0][0],
+            "nome_arquivo": resultado[0][1],
+            "data_importacao": resultado[0][2].isoformat(),
+            "registros": [
+                {
+                    "numero_linha": registro[3],
+                    "dados": json.loads(registro[4])
+                }
+                for registro in resultado
+            ]
+        }
+
+    except ValueError:
+        raise
+
+    except Exception as erro:
+        raise RuntimeError(
+            "Não foi possível buscar a importação."
+        ) from erro
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conexao is not None:
+            conexao.close()
+
+
+def deletar_importacao(usuario_id: int, importacao_id: int) -> None:
+    conexao = None
+    cursor = None
+
+    try:
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+
+        consulta = """
+            DELETE FROM importacao
+            WHERE id = %s AND usuario_id = %s
+        """
+
+        cursor.execute(consulta, (importacao_id, usuario_id))
+        if cursor.rowcount == 0:
+            raise ValueError("Importação não encontrada.")
+
+        conexao.commit()
+
+    except ValueError:
+        raise
+
+    except Exception as erro:
+        if conexao is not None:
+            conexao.rollback()
+        raise RuntimeError(
+            "Não foi possível deletar a importação."
+        ) from erro
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conexao is not None:
+            conexao.close()
