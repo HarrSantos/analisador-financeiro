@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from backend.routes.auth import auth
 from backend.routes.importacao import importacao
+from backend.routes.analise import analise_bp
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -30,6 +31,7 @@ app.config.update(
 
 app.register_blueprint(auth)
 app.register_blueprint(importacao)
+app.register_blueprint(analise_bp)
 
 @app.route("/")
 def inicio():
