@@ -3,3 +3,4 @@ mysql-connector-python==26.7.0
 python-dotenv
 email-validator
 pandas
+scikit-learn
