@@ -15,7 +15,7 @@ def analisar_transacoes(registros: list[dict]) -> list[dict]:
         if col.lower() in ['valor', 'preco', 'preço', 'quantia']:
             coluna_valor = col
             break
-            
+
     if not coluna_valor: #se não der certo ele transmite a mensagem de erro
         raise ValueError("Nenhuma coluna de valor compatível foi encontrada nos registros.")
 
@@ -41,12 +41,12 @@ def analisar_transacoes(registros: list[dict]) -> list[dict]:
     for index, linha in df.iterrows():
         if linha['anomalia'] == -1:
             # O index começa em 0 no Pandas, mas as linhas da folha de cálculo começam em 1
-            numero_linha = index + 1 
+            numero_linha = index + 2
             valor_encontrado = linha[coluna_valor]
-            
+
             anomalias_detectadas.append({
                 "numero_linha": int(numero_linha),
-                "nivel": "ALTO", 
+                "nivel": "ALTO",
                 "descricao": f"O valor R$ {valor_encontrado:.2f} foge do comportamento padrão dos restantes lançamentos."
             })
 

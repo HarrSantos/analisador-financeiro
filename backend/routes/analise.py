@@ -5,7 +5,8 @@ from backend.services.analise_service import (
     criar_analise,
     listar_analises,
     buscar_analise,
-    processar_analise
+    processar_analise,
+    buscar_resultado_analise
 )
 
 analise_bp = Blueprint("analise", __name__, url_prefix="/api/analise")
@@ -86,3 +87,21 @@ def processar_analise_endpoint(analise_id: int):
         return jsonify({
             "erro": "Erro interno ao processar a análise."
         }), 500
+
+@analise_bp.route("/resultado/<int:analise_id>", methods=["GET"])
+@login_required
+def resultado_analise_endpoint(analise_id: int):
+    usuario_id = session["usuario_id"]
+
+    try:
+        resultado = buscar_resultado_analise(usuario_id, analise_id)
+        return jsonify(resultado), 200
+
+    except AnaliseNaoEncontradaError:
+        return jsonify({"erro": "Análise não encontrada."}), 404
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except Exception:
+        return jsonify({"erro": "Erro interno ao processar a solicitação."}), 500
