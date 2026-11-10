@@ -444,52 +444,87 @@ def buscar_anomalias(usuario_id: int, analise_id: int) -> list[dict]:
 def identificar_colunas(registros: list[dict]) -> dict:
     tipos_colunas = {}
 
-    if not registros:
-        return tipos_colunas
+    for coluna in registros[0]:
+        valores = []
 
-    primeiro_registro = registros[0]
+        for registro in registros:
+            valor = registro[coluna]
+            valores.append(valor)
 
-    for coluna, valor in primeiro_registro.items():
+        tipo = identificar_tipo_coluna(valores)
+        resultado = classificar_coluna(coluna, valores)
 
-        if isinstance(valor, (int, float)):
-            tipos_colunas[coluna] = "numerico"
-
-        elif isinstance(valor, str):
-            tipos_colunas[coluna] = "texto"
-
-        else:
-            tipos_colunas[coluna] = "outro"
+        tipos_colunas[coluna] = {
+            "tipo": tipo,
+            "papel": resultado
+        }
 
     return tipos_colunas
 
+def identificar_tipo_coluna(valores):
+    if not valores:
+        return "outro"
+
+    todos_numericos = True
+    todos_texto = True
+
+    for valor in valores:
+        if  not isinstance(valor, str):
+            todos_texto = False
+
+        if  not isinstance(valor, (int, float)):
+            todos_numericos = False
+
+    if todos_numericos:
+        return "numerico"
+
+    elif todos_texto:
+        return "texto"
+
+    else:
+        return "outro"
+
 def gerar_estatisticas(registros: list[dict], anomalias: list[dict], colunas: dict) -> dict:
+
     estatisticas = {
         "total_registros": len(registros),
         "total_anomalias": len(anomalias)
     }
 
-    colunas_numericas = []
-    for nome_coluna, tipo in colunas.items():
-        if tipo == "numerico":
-            colunas_numericas.append(nome_coluna)
+    colunas_para_analisar = []
+
+    for nome_coluna, informacoes in colunas.items():
+
+        eh_numerica = informacoes["tipo"] == "numerico"
+        eh_identificador = informacoes["papel"] == "identificador"
+        eh_temporal = informacoes["papel"] == "temporal"
+        eh_categorico = informacoes["papel"] == "categorico"
+
+        if eh_numerica and not eh_identificador and not eh_temporal and not eh_categorico:
+            colunas_para_analisar.append(nome_coluna)
 
             estatisticas[nome_coluna] = {
-                "soma_financeiras": 0,
-                "contagem": 0,
+                "soma": 0,
+                "quantidade_valores": 0,
                 "media": 0
             }
 
-    for linha in registros:
-        for coluna in colunas_numericas:
-            valor = linha.get(coluna)
+    for registro in registros:
+        for coluna in colunas_para_analisar:
+
+            valor = registro.get(coluna)
 
             if isinstance(valor, (int, float)):
-                estatisticas[coluna]["soma_financeiras"] += valor
-                estatisticas[coluna]["contagem"] += 1
-    for coluna in colunas_numericas:
-        if estatisticas[coluna]["contagem"] > 0:
-            estatisticas[coluna]["media"] =  (
-                estatisticas[coluna]["soma_financeiras"] / estatisticas[coluna]["contagem"]
+                estatisticas[coluna]["soma"] += valor
+                estatisticas[coluna]["quantidade_valores"] += 1
+
+    for coluna in colunas_para_analisar:
+
+        dados_coluna = estatisticas[coluna]
+
+        if dados_coluna["quantidade_valores"] > 0:
+            dados_coluna["media"] = (
+                dados_coluna["soma"] / dados_coluna["quantidade_valores"]
             )
 
     return estatisticas
@@ -512,3 +547,300 @@ def buscar_resultado_analise(usuario_id: int, analise_id: int) -> dict:
         "estatisticas": estatisticas,
         "colunas": colunas
     }
+
+def classificar_coluna(nome_coluna, valores):
+    pontuacao = pontuar_identificador(nome_coluna, valores)
+
+    if pontuacao >= 60:
+        return "identificador"
+
+    temporal = identificar_coluna_temporal(nome_coluna)
+
+    if temporal:
+        return "temporal"
+
+    categorico = identificar_coluna_categorica(nome_coluna)
+
+    if categorico:
+        return "categorico"
+
+    return "nao_identificador"
+
+
+def pontuar_identificador(nome_coluna, valores):
+    identificadores_fortes = [
+        "id",
+        "identificador",
+        "uuid",
+        "guid",
+        "cpf",
+        "cnpj",
+        "rg",
+        "matricula",
+        "matrícula",
+        "passaporte",
+        "numero_documento",
+        "número_documento",
+        "documento",
+        "codigo",
+        "código",
+        "cod",
+        "numero_pedido",
+        "número_pedido",
+        "pedido_id",
+        "cliente_id",
+        "usuario_id",
+        "user_id",
+        "produto_id",
+        "funcionario_id",
+        "funcionário_id",
+        "transacao_id",
+        "transação_id",
+        "registro_id",
+        "importacao_id",
+        "importação_id",
+        "chave",
+        "chave_id",
+        "codigo_produto",
+        "código_produto",
+        "codigo_cliente",
+        "código_cliente",
+        "codigo_barras",
+        "código_barras",
+        "barcode"
+    ]
+
+    identificadores_contextuais = [
+        "produto",
+        "cliente",
+        "funcionario",
+        "fornecedor",
+        "pedido"
+    ]
+
+    pontuacao = 0
+
+    palavras_coluna = nome_coluna.lower().split("_")
+
+    for palavra in palavras_coluna:
+        if palavra in identificadores_fortes:
+            pontuacao += 50
+            break
+        elif palavra in identificadores_contextuais:
+            pontuacao += 20
+            break
+
+    if valores:
+        valores_unicos = set(valores)
+        proporcao_unicos = len(valores_unicos) / len(valores)
+        if proporcao_unicos == 1.0:
+            pontuacao += 30
+        elif proporcao_unicos >= 0.8:
+            pontuacao += 20
+        elif proporcao_unicos >= 0.6:
+            pontuacao += 10
+
+    if identificar_sequencial(valores):
+        pontuacao += 10
+
+    if identificar_mesmo_tamanho(valores):
+        pontuacao += 5
+
+    if identificar_alfanumerico(valores):
+        pontuacao += 15
+
+    return pontuacao
+
+def identificar_sequencial(valores):
+    if not valores:
+        return False
+
+    if len(valores) < 2:
+        return False
+
+    valores_numericos = []
+
+    for valor in valores:
+        try:
+            valor = int(valor)
+            valores_numericos.append(valor)
+        except ValueError:
+            return False
+
+    ordenados = sorted(valores_numericos)
+
+    diferenca = ordenados[1] - ordenados[0]
+
+    for i in range(len(ordenados) - 1):
+        diferenca_atual = ordenados[i + 1] - ordenados[i]
+
+        if diferenca_atual != diferenca:
+            return False
+
+    return True
+
+def identificar_mesmo_tamanho(valores):
+    if not valores:
+        return False
+
+    tamanho_inicial = len(str(valores[0]))
+
+    for valor in valores:
+        if len(str(valor)) != tamanho_inicial:
+            return False
+
+    return True
+
+def identificar_alfanumerico(valores):
+    if not valores:
+        return False
+
+    valores_alphanumericos = 0
+
+    for valor in valores:
+        tem_numero = False
+        tem_letra = False
+
+        for caracter in str(valor):
+            if caracter.isdigit():
+                tem_numero = True
+            if caracter.isalpha():
+                tem_letra = True
+
+        if tem_numero and tem_letra:
+            valores_alphanumericos += 1
+
+    if valores_alphanumericos == len(valores):
+        return True
+
+    return False
+
+def identificar_coluna_temporal(nome_coluna):
+
+    identificadores_temporais = [
+        "ano",
+        "anos",
+        "data",
+        "datas",
+        "dia",
+        "dias",
+        "mes",
+        "mês",
+        "meses",
+        "semana",
+        "semanas",
+        "quinzena",
+        "quinzenal",
+        "bimestre",
+        "bimestral",
+        "trimestre",
+        "trimestral",
+        "quadrimestre",
+        "semestre",
+        "semestral",
+        "periodo",
+        "período",
+        "periodos",
+        "períodos",
+        "exercicio",
+        "exercício",
+        "competencia",
+        "competência",
+        "hora",
+        "horas",
+        "horario",
+        "horário",
+        "minuto",
+        "minutos",
+        "segundo",
+        "segundos",
+        "vencimento",
+        "validade",
+        "emissao",
+        "emissão",
+        "lancamento",
+        "lançamento",
+        "nascimento",
+        "criacao",
+        "criação",
+        "atualizacao",
+        "atualização",
+        "inicio",
+        "início",
+        "fim",
+        "expiracao",
+        "expiração",
+        "year",
+        "years",
+        "date",
+        "dates",
+        "day",
+        "days",
+        "month",
+        "months",
+        "week",
+        "weeks",
+        "fortnight",
+        "quarter",
+        "quarterly",
+        "semester",
+        "period",
+        "periods",
+        "time",
+        "times",
+        "hour",
+        "hours",
+        "minute",
+        "minutes",
+        "second",
+        "seconds",
+        "timestamp",
+        "datetime",
+        "deadline",
+        "due",
+        "expiry",
+        "expiration",
+        "validity",
+        "birth",
+        "created",
+        "updated"
+    ]
+
+    palavras_coluna = nome_coluna.lower().split("_")
+
+    for palavra in palavras_coluna:
+        if palavra in identificadores_temporais:
+            return True
+
+    return False
+
+def identificar_coluna_categorica(nome_coluna):
+    nomes_categoricos = [
+    "status",
+    "situacao",
+    "situação",
+    "tipo",
+    "categoria",
+    "departamento",
+    "regiao",
+    "região",
+    "cidade",
+    "estado",
+    "pais",
+    "país",
+    "genero",
+    "gênero",
+    "classification",
+    "category",
+    "department",
+    "region",
+    "country"
+    ]
+
+    palavras_coluna = nome_coluna.lower().split("_")
+
+    for palavra in palavras_coluna:
+        if palavra in nomes_categoricos:
+            return True
+
+    return False
