@@ -54,7 +54,7 @@ def buscar_analise_endpoint(analise_id: int):
         analise = buscar_analise(usuario_id, analise_id)
         return jsonify(analise), 200
 
-    except ValueError:
+    except AnaliseNaoEncontradaError:
         return jsonify({
             "erro": "Análise não encontrada."
         }), 404

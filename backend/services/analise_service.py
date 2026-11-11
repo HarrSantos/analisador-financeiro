@@ -155,6 +155,7 @@ def buscar_registros_para_analise(importacao_id: int, usuario_id: int) -> list[d
             ON registro.importacao_id = importacao.id
             WHERE importacao.id = %s
                 AND importacao.usuario_id = %s
+            ORDER BY registro.numero_linha ASC
         """
 
         cursor.execute(consulta, (importacao_id, usuario_id))
@@ -272,7 +273,9 @@ def processar_analise(usuario_id: int, analise_id: int) -> None:
         if not registros:
             raise ValueError("Não há registros para análise.")
 
-        anomalias = detectar_anomalias(registros)
+        colunas = identificar_colunas(registros)
+
+        anomalias = detectar_anomalias(registros, colunas)
 
         salvar_anomalias(conexao, analise_id, importacao_id, anomalias)
 
@@ -441,39 +444,90 @@ def buscar_anomalias(usuario_id: int, analise_id: int) -> list[dict]:
         if conexao is not None:
             conexao.close()
 
-def identificar_colunas(registros: list[dict]) -> dict:
-    tipos_colunas = {}
+IDENTIFICADORES_FORTES = {
+    "id", "identificador", "uuid", "guid",
+    "cpf", "cnpj", "rg",
+    "matricula", "matrícula",
+    "passaporte", "documento",
+    "numero_documento", "número_documento",
+    "codigo", "código", "cod",
+    "numero_pedido", "número_pedido",
+    "pedido_id", "cliente_id", "usuario_id", "user_id",
+    "produto_id", "funcionario_id", "funcionário_id",
+    "transacao_id", "transação_id",
+    "registro_id", "importacao_id", "importação_id",
+    "chave", "chave_id",
+    "codigo_produto", "código_produto",
+    "codigo_cliente", "código_cliente",
+    "codigo_barras", "código_barras", "barcode"
+}
 
-    for coluna in registros[0]:
-        valores = []
+IDENTIFICADORES_CONTEXTUAIS = {
+    "produto", "cliente", "funcionario",
+    "funcionário", "fornecedor", "pedido"
+}
 
-        for registro in registros:
-            valor = registro[coluna]
-            valores.append(valor)
+NOMES_TEMPORAIS = {
+    "ano", "anos", "data", "datas",
+    "dia", "dias", "mes", "mês", "meses",
+    "semana", "semanas", "quinzena", "quinzenal",
+    "bimestre", "bimestral", "trimestre", "trimestral",
+    "quadrimestre", "semestre", "semestral",
+    "periodo", "período", "periodos", "períodos",
+    "exercicio", "exercício", "competencia", "competência",
+    "hora", "horas", "horario", "horário",
+    "minuto", "minutos", "segundo", "segundos",
+    "vencimento", "validade", "emissao", "emissão",
+    "lancamento", "lançamento", "nascimento",
+    "criacao", "criação", "atualizacao", "atualização",
+    "inicio", "início", "fim", "expiracao", "expiração",
+    "year", "years", "date", "dates", "day", "days",
+    "month", "months", "week", "weeks", "fortnight",
+    "quarter", "quarterly", "semester", "period", "periods",
+    "time", "times", "hour", "hours", "minute", "minutes",
+    "second", "seconds", "timestamp", "datetime",
+    "deadline", "due", "expiry", "expiration",
+    "validity", "birth", "created", "updated"
+}
 
-        tipo = identificar_tipo_coluna(valores)
-        resultado = classificar_coluna(coluna, valores)
+NOMES_CATEGORICOS = {
+    "status", "situacao", "situação",
+    "tipo", "categoria", "departamento",
+    "regiao", "região", "cidade",
+    "estado", "pais", "país",
+    "genero", "gênero",
+    "classification", "category",
+    "department", "region", "country"
+}
 
-        tipos_colunas[coluna] = {
-            "tipo": tipo,
-            "papel": resultado
-        }
+PAPEIS_EXCLUIDOS_DAS_ESTATISTICAS = {
+    "identificador",
+    "temporal",
+    "categorico"
+}
 
-    return tipos_colunas
 
-def identificar_tipo_coluna(valores):
+def identificar_tipo_coluna(valores: list) -> str:
     if not valores:
+        return "outro"
+
+    valores_validos = [
+        valor for valor in valores
+        if valor is not None and valor != ""
+    ]
+
+    if not valores_validos:
         return "outro"
 
     todos_numericos = True
     todos_texto = True
 
-    for valor in valores:
-        if  not isinstance(valor, str):
-            todos_texto = False
-
-        if  not isinstance(valor, (int, float)):
+    for valor in valores_validos:
+        if not isinstance(valor, (int, float)) or isinstance(valor, bool):
             todos_numericos = False
+
+        if not isinstance(valor, str):
+            todos_texto = False
 
     if todos_numericos:
         return "numerico"
@@ -481,10 +535,155 @@ def identificar_tipo_coluna(valores):
     elif todos_texto:
         return "texto"
 
-    else:
-        return "outro"
+    return "outro"
 
-def gerar_estatisticas(registros: list[dict], anomalias: list[dict], colunas: dict) -> dict:
+
+def pontuar_identificador(nome_coluna: str, valores: list) -> int:
+    pontuacao = 0
+
+    nome = nome_coluna.lower()
+    palavras = nome.split("_")
+
+    identificador_forte = (
+        any(palavra in IDENTIFICADORES_FORTES for palavra in palavras)
+        or any(
+            "_" in termo and termo in nome
+            for termo in IDENTIFICADORES_FORTES
+        )
+    )
+
+    identificador_contextual = any(
+        palavra in IDENTIFICADORES_CONTEXTUAIS
+        for palavra in palavras
+    )
+
+    if identificador_forte:
+        pontuacao += 50
+
+    elif identificador_contextual:
+        pontuacao += 20
+
+    valores_validos = [
+        valor for valor in valores
+        if valor is not None and valor != ""
+    ]
+
+    if not valores_validos:
+        return pontuacao
+
+    valores_unicos = {str(valor) for valor in valores_validos}
+    proporcao_unicos = len(valores_unicos) / len(valores_validos)
+
+    if proporcao_unicos == 1.0:
+        pontuacao += 30
+
+    elif proporcao_unicos >= 0.8:
+        pontuacao += 20
+
+    elif proporcao_unicos >= 0.6:
+        pontuacao += 10
+
+    if len(valores_validos) >= 2:
+        valores_numericos = []
+
+        for valor in valores_validos:
+            try:
+                if isinstance(valor, bool):
+                    raise ValueError
+
+                if isinstance(valor, float) and not valor.is_integer():
+                    raise ValueError
+
+                if (
+                    isinstance(valor, str)
+                    and not valor.strip().lstrip("+-").isdigit()
+                ):
+                    raise ValueError
+
+                valores_numericos.append(int(valor))
+
+            except (ValueError, TypeError, OverflowError):
+                valores_numericos = []
+                break
+
+        if len(valores_numericos) == len(valores_validos):
+            ordenados = sorted(valores_numericos)
+            diferenca = ordenados[1] - ordenados[0]
+
+            sequencial = (
+                diferenca != 0
+                and all(
+                    ordenados[i + 1] - ordenados[i] == diferenca
+                    for i in range(len(ordenados) - 1)
+                )
+            )
+
+            if sequencial:
+                pontuacao += 10
+
+    representacoes = [str(valor) for valor in valores_validos]
+    tamanhos = {len(valor) for valor in representacoes}
+
+    if len(tamanhos) == 1:
+        pontuacao += 5
+
+    todos_alfanumericos = all(
+        any(caracter.isdigit() for caracter in str(valor))
+        and any(caracter.isalpha() for caracter in str(valor))
+        for valor in valores_validos
+    )
+
+    if todos_alfanumericos:
+        pontuacao += 15
+
+    return pontuacao
+
+
+def classificar_coluna(nome_coluna: str, valores: list) -> str:
+    pontuacao = pontuar_identificador(nome_coluna, valores)
+
+    palavras = set(nome_coluna.lower().split("_"))
+
+    if pontuacao >= 60:
+        return "identificador"
+
+    if palavras & NOMES_TEMPORAIS:
+        return "temporal"
+
+    if palavras & NOMES_CATEGORICOS:
+        return "categorico"
+
+    return "nao_identificador"
+
+
+def identificar_colunas(registros: list[dict]) -> dict:
+    tipos_colunas = {}
+
+    if not registros:
+        return tipos_colunas
+
+    for coluna in registros[0]:
+        valores = [
+            registro.get(coluna)
+            for registro in registros
+        ]
+
+        tipo = identificar_tipo_coluna(valores)
+        papel = classificar_coluna(coluna, valores)
+
+        tipos_colunas[coluna] = {
+            "tipo": tipo,
+            "papel": papel
+        }
+
+    return tipos_colunas
+
+
+def gerar_estatisticas(
+    registros: list[dict],
+    anomalias: list[dict],
+    colunas: dict
+) -> dict:
 
     estatisticas = {
         "total_registros": len(registros),
@@ -494,13 +693,12 @@ def gerar_estatisticas(registros: list[dict], anomalias: list[dict], colunas: di
     colunas_para_analisar = []
 
     for nome_coluna, informacoes in colunas.items():
-
         eh_numerica = informacoes["tipo"] == "numerico"
-        eh_identificador = informacoes["papel"] == "identificador"
-        eh_temporal = informacoes["papel"] == "temporal"
-        eh_categorico = informacoes["papel"] == "categorico"
+        papel_excluido = (
+            informacoes["papel"] in PAPEIS_EXCLUIDOS_DAS_ESTATISTICAS
+        )
 
-        if eh_numerica and not eh_identificador and not eh_temporal and not eh_categorico:
+        if eh_numerica and not papel_excluido:
             colunas_para_analisar.append(nome_coluna)
 
             estatisticas[nome_coluna] = {
@@ -511,23 +709,21 @@ def gerar_estatisticas(registros: list[dict], anomalias: list[dict], colunas: di
 
     for registro in registros:
         for coluna in colunas_para_analisar:
-
             valor = registro.get(coluna)
 
-            if isinstance(valor, (int, float)):
+            if isinstance(valor, (int, float)) and not isinstance(valor, bool):
                 estatisticas[coluna]["soma"] += valor
                 estatisticas[coluna]["quantidade_valores"] += 1
 
     for coluna in colunas_para_analisar:
-
         dados_coluna = estatisticas[coluna]
+        quantidade = dados_coluna["quantidade_valores"]
 
-        if dados_coluna["quantidade_valores"] > 0:
-            dados_coluna["media"] = (
-                dados_coluna["soma"] / dados_coluna["quantidade_valores"]
-            )
+        if quantidade > 0:
+            dados_coluna["media"] = dados_coluna["soma"] / quantidade
 
     return estatisticas
+
 
 def buscar_resultado_analise(usuario_id: int, analise_id: int) -> dict:
     analise = buscar_analise(usuario_id, analise_id)
@@ -535,10 +731,18 @@ def buscar_resultado_analise(usuario_id: int, analise_id: int) -> dict:
 
     importacao_id = analise["importacao_id"]
 
-    registros = buscar_registros_para_analise(importacao_id, usuario_id)
+    registros = buscar_registros_para_analise(
+        importacao_id,
+        usuario_id
+    )
 
     colunas = identificar_colunas(registros)
-    estatisticas = gerar_estatisticas(registros, anomalias, colunas)
+
+    estatisticas = gerar_estatisticas(
+        registros,
+        anomalias,
+        colunas
+    )
 
     return {
         "analise": analise,
@@ -547,300 +751,3 @@ def buscar_resultado_analise(usuario_id: int, analise_id: int) -> dict:
         "estatisticas": estatisticas,
         "colunas": colunas
     }
-
-def classificar_coluna(nome_coluna, valores):
-    pontuacao = pontuar_identificador(nome_coluna, valores)
-
-    if pontuacao >= 60:
-        return "identificador"
-
-    temporal = identificar_coluna_temporal(nome_coluna)
-
-    if temporal:
-        return "temporal"
-
-    categorico = identificar_coluna_categorica(nome_coluna)
-
-    if categorico:
-        return "categorico"
-
-    return "nao_identificador"
-
-
-def pontuar_identificador(nome_coluna, valores):
-    identificadores_fortes = [
-        "id",
-        "identificador",
-        "uuid",
-        "guid",
-        "cpf",
-        "cnpj",
-        "rg",
-        "matricula",
-        "matrícula",
-        "passaporte",
-        "numero_documento",
-        "número_documento",
-        "documento",
-        "codigo",
-        "código",
-        "cod",
-        "numero_pedido",
-        "número_pedido",
-        "pedido_id",
-        "cliente_id",
-        "usuario_id",
-        "user_id",
-        "produto_id",
-        "funcionario_id",
-        "funcionário_id",
-        "transacao_id",
-        "transação_id",
-        "registro_id",
-        "importacao_id",
-        "importação_id",
-        "chave",
-        "chave_id",
-        "codigo_produto",
-        "código_produto",
-        "codigo_cliente",
-        "código_cliente",
-        "codigo_barras",
-        "código_barras",
-        "barcode"
-    ]
-
-    identificadores_contextuais = [
-        "produto",
-        "cliente",
-        "funcionario",
-        "fornecedor",
-        "pedido"
-    ]
-
-    pontuacao = 0
-
-    palavras_coluna = nome_coluna.lower().split("_")
-
-    for palavra in palavras_coluna:
-        if palavra in identificadores_fortes:
-            pontuacao += 50
-            break
-        elif palavra in identificadores_contextuais:
-            pontuacao += 20
-            break
-
-    if valores:
-        valores_unicos = set(valores)
-        proporcao_unicos = len(valores_unicos) / len(valores)
-        if proporcao_unicos == 1.0:
-            pontuacao += 30
-        elif proporcao_unicos >= 0.8:
-            pontuacao += 20
-        elif proporcao_unicos >= 0.6:
-            pontuacao += 10
-
-    if identificar_sequencial(valores):
-        pontuacao += 10
-
-    if identificar_mesmo_tamanho(valores):
-        pontuacao += 5
-
-    if identificar_alfanumerico(valores):
-        pontuacao += 15
-
-    return pontuacao
-
-def identificar_sequencial(valores):
-    if not valores:
-        return False
-
-    if len(valores) < 2:
-        return False
-
-    valores_numericos = []
-
-    for valor in valores:
-        try:
-            valor = int(valor)
-            valores_numericos.append(valor)
-        except ValueError:
-            return False
-
-    ordenados = sorted(valores_numericos)
-
-    diferenca = ordenados[1] - ordenados[0]
-
-    for i in range(len(ordenados) - 1):
-        diferenca_atual = ordenados[i + 1] - ordenados[i]
-
-        if diferenca_atual != diferenca:
-            return False
-
-    return True
-
-def identificar_mesmo_tamanho(valores):
-    if not valores:
-        return False
-
-    tamanho_inicial = len(str(valores[0]))
-
-    for valor in valores:
-        if len(str(valor)) != tamanho_inicial:
-            return False
-
-    return True
-
-def identificar_alfanumerico(valores):
-    if not valores:
-        return False
-
-    valores_alphanumericos = 0
-
-    for valor in valores:
-        tem_numero = False
-        tem_letra = False
-
-        for caracter in str(valor):
-            if caracter.isdigit():
-                tem_numero = True
-            if caracter.isalpha():
-                tem_letra = True
-
-        if tem_numero and tem_letra:
-            valores_alphanumericos += 1
-
-    if valores_alphanumericos == len(valores):
-        return True
-
-    return False
-
-def identificar_coluna_temporal(nome_coluna):
-
-    identificadores_temporais = [
-        "ano",
-        "anos",
-        "data",
-        "datas",
-        "dia",
-        "dias",
-        "mes",
-        "mês",
-        "meses",
-        "semana",
-        "semanas",
-        "quinzena",
-        "quinzenal",
-        "bimestre",
-        "bimestral",
-        "trimestre",
-        "trimestral",
-        "quadrimestre",
-        "semestre",
-        "semestral",
-        "periodo",
-        "período",
-        "periodos",
-        "períodos",
-        "exercicio",
-        "exercício",
-        "competencia",
-        "competência",
-        "hora",
-        "horas",
-        "horario",
-        "horário",
-        "minuto",
-        "minutos",
-        "segundo",
-        "segundos",
-        "vencimento",
-        "validade",
-        "emissao",
-        "emissão",
-        "lancamento",
-        "lançamento",
-        "nascimento",
-        "criacao",
-        "criação",
-        "atualizacao",
-        "atualização",
-        "inicio",
-        "início",
-        "fim",
-        "expiracao",
-        "expiração",
-        "year",
-        "years",
-        "date",
-        "dates",
-        "day",
-        "days",
-        "month",
-        "months",
-        "week",
-        "weeks",
-        "fortnight",
-        "quarter",
-        "quarterly",
-        "semester",
-        "period",
-        "periods",
-        "time",
-        "times",
-        "hour",
-        "hours",
-        "minute",
-        "minutes",
-        "second",
-        "seconds",
-        "timestamp",
-        "datetime",
-        "deadline",
-        "due",
-        "expiry",
-        "expiration",
-        "validity",
-        "birth",
-        "created",
-        "updated"
-    ]
-
-    palavras_coluna = nome_coluna.lower().split("_")
-
-    for palavra in palavras_coluna:
-        if palavra in identificadores_temporais:
-            return True
-
-    return False
-
-def identificar_coluna_categorica(nome_coluna):
-    nomes_categoricos = [
-    "status",
-    "situacao",
-    "situação",
-    "tipo",
-    "categoria",
-    "departamento",
-    "regiao",
-    "região",
-    "cidade",
-    "estado",
-    "pais",
-    "país",
-    "genero",
-    "gênero",
-    "classification",
-    "category",
-    "department",
-    "region",
-    "country"
-    ]
-
-    palavras_coluna = nome_coluna.lower().split("_")
-
-    for palavra in palavras_coluna:
-        if palavra in nomes_categoricos:
-            return True
-
-    return False

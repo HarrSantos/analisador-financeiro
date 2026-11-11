@@ -13,13 +13,21 @@ def ler_csv(conteudo: bytes) -> pd.DataFrame:
         df = pd.read_csv(
             arquivo,
             sep=None,
-            engine="python"
+            engine="python",
+            encoding="utf-8-sig"
         )
 
     except (pd.errors.ParserError, UnicodeDecodeError) as erro:
         raise ValueError(
             "Não foi possível interpretar o arquivo CSV."
         ) from erro
+
+    df.columns = (
+        df.columns
+        .astype(str)
+        .str.replace("\ufeff", "", regex=False)
+        .str.strip()
+    )
 
     if df.empty:
         raise ValueError("O CSV não contém registros.")
