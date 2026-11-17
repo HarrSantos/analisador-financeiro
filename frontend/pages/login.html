@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="../css/style.css">
+
+    <title>Entrar | Analisador Financeiro</title>
+
+    <script src="../js/login.js" defer></script>
+  </head>
+
+  <body class="auth">
+
+    <!-- Painel de apresentação -->
+    <section class="hero">
+
+      <div class="brand">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+          <rect
+            width="34"
+            height="34"
+            rx="9"
+            fill="#2457F5"
+          />
+
+          <path
+            d="M8 23l6-7 5 4 7-9"
+            fill="none"
+            stroke="#fff"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        <div>
+          <b>Analisador</b>
+          <span>Financeiro</span>
+        </div>
+      </div>
+
+      <h1>
+        Encontre o que foge do padrão nos seus dados.
+      </h1>
+
+      <p>
+        Importe uma planilha CSV e veja quais registros destoam,
+        com o nível de cada anomalia e as estatísticas das colunas.
+      </p>
+
+      <svg
+        id="viz"
+        viewBox="0 0 320 180"
+        role="img"
+        aria-label="Ilustração de análise de dados"
+      ></svg>
+
+    </section>
+
+
+    <!-- Login e Cadastro vivem na mesma página -->
+    <section class="panel">
+
+      <div class="form">
+
+        <!-- Login -->
+        <form id="f-login" aria-labelledby="t-l">
+
+          <h2 id="t-l">
+            Entrar na sua conta
+          </h2>
+
+          <p class="mut">
+            Use seu e-mail e senha para continuar.
+          </p>
+
+          <div class="fld">
+            <label for="le">E-mail</label>
+
+            <input
+              id="le"
+              type="email"
+              autocomplete="email"
+              maxlength="255"
+              required
+            >
+          </div>
+
+          <div class="fld">
+            <label for="ls">Senha</label>
+
+            <input
+              id="ls"
+              type="password"
+              autocomplete="current-password"
+              maxlength="128"
+              required
+            >
+          </div>
+
+          <button class="btn wide">
+            Entrar
+          </button>
+
+          <p class="sw mut sm">
+            Ainda não tem conta?
+
+            <button
+              type="button"
+              class="link"
+              data-modo="cadastro"
+            >
+              Criar conta
+            </button>
+          </p>
+
+        </form>
+
+
+        <!-- Cadastro -->
+        <form
+          id="f-cad"
+          aria-labelledby="t-c"
+          hidden
+        >
+
+          <h2 id="t-c">
+            Crie sua conta
+          </h2>
+
+          <p class="mut">
+            Informe seus dados para começar.
+          </p>
+
+          <div class="fld">
+            <label for="cn">Nome</label>
+
+            <input
+              id="cn"
+              type="text"
+              autocomplete="name"
+              maxlength="120"
+              required
+            >
+          </div>
+
+          <div class="fld">
+            <label for="ce">E-mail</label>
+
+            <input
+              id="ce"
+              type="email"
+              autocomplete="email"
+              maxlength="255"
+              required
+            >
+          </div>
+
+          <div class="fld">
+            <label for="cs">Senha</label>
+
+            <input
+              id="cs"
+              type="password"
+              autocomplete="new-password"
+              maxlength="128"
+              required
+            >
+          </div>
+
+          <div class="fld">
+            <label for="ccs">Confirmar senha</label>
+
+            <input
+              id="ccs"
+              type="password"
+              autocomplete="new-password"
+              maxlength="128"
+              required
+            >
+          </div>
+
+          <button class="btn wide">
+            Criar conta
+          </button>
+
+          <p
+            class="msg"
+            id="ok"
+            role="status"
+            hidden
+          >
+            Conta criada. Agora é só entrar.
+          </p>
+
+          <p class="sw mut sm">
+            Já tem conta?
+
+            <button
+              type="button"
+              class="link"
+              data-modo="login"
+            >
+              Entrar
+            </button>
+          </p>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </body>
+
+</html>

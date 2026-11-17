@@ -33,6 +33,15 @@ app.register_blueprint(auth)
 app.register_blueprint(importacao)
 app.register_blueprint(analise_bp)
 
+@app.after_request
+def configurar_cors(resposta):
+    resposta.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:5500"
+    resposta.headers["Access-Control-Allow-Credentials"] = "true"
+    resposta.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    resposta.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+
+    return resposta
+
 @app.route("/")
 def inicio():
     return "Analisador Financeiro funcionando!"

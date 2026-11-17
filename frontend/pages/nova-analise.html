@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Nova análise | Analisador Financeiro</title>
+    <script src="../js/mock.js" defer></script>
+    <script src="../js/app.js" defer></script>
+    <script src="../js/nova-analise.js" defer></script>
+  </head>
+
+  <body data-nav="nova-analise" data-crumb="Nova análise">
+    <div class="app">
+
+      <!-- Sidebar e topbar são montadas por js/app.js (iguais em todas as páginas internas) -->
+      <aside class="side" id="side"></aside>
+
+      <div class="main">
+        <header class="top" id="top"></header>
+
+        <main class="page">
+
+          <div class="hd">
+            <div>
+              <h1>Nova análise</h1>
+              <p>Importe uma planilha CSV para detectar anomalias.</p>
+            </div>
+          </div>
+
+          <div class="split">
+
+            <!-- Fluxo da análise: só um painel [data-s] fica visível por vez (nova-analise.js) -->
+            <section class="card pad" id="fluxo" aria-live="polite">
+
+              <!-- 1. Estado inicial -->
+              <div data-s="inicial">
+                <div class="drop" id="drop">
+                  <span class="ic" data-ic="up"></span>
+                  <b>Arraste o arquivo CSV aqui</b>
+                  <span class="mut sm">ou</span>
+                  <button type="button" class="btn">Selecionar arquivo</button>
+                  <span class="mut sm">Somente arquivos .csv</span>
+                </div>
+                <input type="file" id="arq" accept=".csv,text/csv" hidden>
+              </div>
+
+              <!-- 2. Arquivo selecionado -->
+              <div data-s="selecionado" class="state" hidden>
+                <h2>Arquivo selecionado</h2>
+                <div class="file">
+                  <span data-ic="file"></span>
+                  <div>
+                    <b id="nome"></b>
+                    <span class="mut sm" id="tam"></span>
+                  </div>
+                  <button type="button" class="btn ghost sm" id="rm"
+                          aria-label="Remover arquivo"><span data-ic="x"></span></button>
+                </div>
+                <button type="button" class="btn" id="go">Iniciar análise</button>
+              </div>
+
+              <!-- 3. Processamento -->
+              <div data-s="processando" class="state" hidden>
+                <h2>Analisando o arquivo</h2>
+                <ol class="steps" id="passos">
+                  <li>Importando o arquivo</li>
+                  <li>Criando a análise</li>
+                  <li>Detectando anomalias</li>
+                </ol>
+              </div>
+
+              <!-- 4. Concluído -->
+              <div data-s="concluido" class="state" hidden>
+                <h2>Análise concluída</h2>
+                <p class="mut"><b id="ok-nome"></b> foi analisado.</p>
+                <div class="acts">
+                  <a class="btn" href="detalhes-analise.html">Ver resultado</a>
+                  <button type="button" class="btn ghost" data-reset>Analisar outro arquivo</button>
+                </div>
+              </div>
+
+              <!-- 5. Erro -->
+              <div data-s="erro" class="state" hidden>
+                <h2>Não foi possível analisar</h2>
+                <p class="msgerr" id="msg" role="alert"></p>
+                <button type="button" class="btn" data-reset>Escolher outro arquivo</button>
+              </div>
+
+            </section>
+
+            <aside class="card pad">
+              <h2>Antes de importar</h2>
+              <ul class="tips">
+                <li>Use um arquivo .csv com cabeçalho. O separador é detectado automaticamente.</li>
+                <li>Toda coluna precisa ter nome.</li>
+                <li>
+                  A detecção considera colunas numéricas que não sejam identificadores
+                  e precisa de ao menos 3 registros.
+                </li>
+              </ul>
+            </aside>
+
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

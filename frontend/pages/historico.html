@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Histórico | Analisador Financeiro</title>
+    <script src="../js/mock.js" defer></script>
+    <script src="../js/app.js" defer></script>
+    <script src="../js/historico.js" defer></script>
+  </head>
+
+  <body data-nav="historico" data-crumb="Histórico">
+    <div class="app">
+
+      <!-- Sidebar e topbar são montadas por js/app.js (iguais em todas as páginas internas) -->
+      <aside class="side" id="side"></aside>
+
+      <div class="main">
+        <header class="top" id="top"></header>
+
+        <main class="page">
+
+          <div class="hd">
+            <div>
+              <h1>Histórico</h1>
+              <p>Todas as análises feitas na sua conta.</p>
+            </div>
+            <a class="btn" href="nova-analise.html"><span data-ic="plus"></span>Nova análise</a>
+          </div>
+
+          <section class="card sec">
+            <header>
+              <div class="tools">
+                <div class="search">
+                  <span data-ic="search"></span><input id="q" type="search"
+                    placeholder="Buscar por arquivo ou ID" aria-label="Buscar análise">
+                </div>
+
+                <select id="fs" aria-label="Filtrar por status">
+                  <option value="">Todos os status</option>
+                  <option value="CONCLUIDA">Concluída</option>
+                  <option value="PROCESSANDO">Processando</option>
+                  <option value="PENDENTE">Pendente</option>
+                  <option value="ERRO">Erro</option>
+                </select>
+              </div>
+            </header>
+
+            <!-- Tabela (linhas montadas por historico.js) -->
+            <div class="tw" id="tabela">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Arquivo</th>
+                    <th class="num">ID</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th><span class="vh">Ação</span></th>
+                  </tr>
+                </thead>
+                <tbody id="tb"></tbody>
+              </table>
+            </div>
+
+            <!-- Estado vazio: aparece quando a busca/filtro não encontra nada -->
+            <div class="empty" id="vazio" hidden>
+              <b>Nenhuma análise encontrada</b>
+              <span>Ajuste a busca ou o filtro de status.</span>
+              <button type="button" class="btn ghost" id="limpar">Limpar filtros</button>
+            </div>
+
+            <div class="pager" id="pager"></div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

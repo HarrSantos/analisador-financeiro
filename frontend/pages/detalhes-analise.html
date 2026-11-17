@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Detalhes da análise | Analisador Financeiro</title>
+    <script src="../js/mock.js" defer></script>
+    <script src="../js/app.js" defer></script>
+    <script src="../js/detalhes-analise.js" defer></script>
+  </head>
+
+  <body data-nav="historico" data-crumb="Histórico|historico.html,Análise #15">
+    <div class="app">
+
+      <!-- Sidebar e topbar são montadas por js/app.js (iguais em todas as páginas internas) -->
+      <aside class="side" id="side"></aside>
+
+      <div class="main">
+        <header class="top" id="top"></header>
+
+        <main class="page">
+
+          <div class="hd">
+            <div>
+              <h1 id="arq"></h1>
+              <p>Resultado da detecção de anomalias nas colunas numéricas.</p>
+            </div>
+            <a class="btn ghost" href="historico.html">Voltar ao histórico</a>
+          </div>
+
+          <!-- Informações gerais (detalhes-analise.js) -->
+          <dl class="meta" id="meta"></dl>
+
+          <!-- Estatísticas por coluna -->
+          <section class="card sec" aria-labelledby="h-es">
+            <header>
+              <h2 id="h-es">Estatísticas por coluna</h2>
+            </header>
+            <div class="stats" id="stats"></div>
+            <p class="mut sm" id="fora"></p>
+          </section>
+
+          <!-- Anomalias, com filtro por nível -->
+          <section class="card sec" aria-labelledby="h-an">
+            <header>
+              <h2 id="h-an">Anomalias</h2>
+              <div class="chips" id="chips" role="group" aria-label="Filtrar por nível"></div>
+            </header>
+
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="num">Linha</th>
+                    <th>Nível</th>
+                    <th>Dados do registro</th>
+                    <th>Descrição</th>
+                  </tr>
+                </thead>
+                <tbody id="anom"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Registros: as colunas do cabeçalho vêm dos dados -->
+          <section class="card sec" aria-labelledby="h-rg">
+            <header>
+              <h2 id="h-rg">Registros</h2>
+              <div class="search" style="max-width:320px">
+                <span data-ic="search"></span><input id="qr" type="search"
+                  placeholder="Buscar nos registros" aria-label="Buscar nos registros">
+              </div>
+            </header>
+
+            <p class="mut sm nt">Linhas com marcador de nível são anomalias.
+              Colunas com <i class="dot"></i> entram na detecção.</p>
+
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr id="rh"></tr>
+                </thead>
+                <tbody id="rb"></tbody>
+              </table>
+            </div>
+
+            <div class="pager" id="rp"></div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

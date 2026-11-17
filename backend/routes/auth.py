@@ -54,11 +54,11 @@ def cadastrar():
         # Verifica se o e-mail já está cadastrado no banco de dados
         conexao = conectar_banco()
         cursor = conexao.cursor()
-        
+
         consulta = "SELECT id FROM usuario WHERE email = %s"
         cursor.execute(consulta, (email,))
         usuario_existente = cursor.fetchone()
-        
+
         # O e-mail já está cadastrado
         if usuario_existente:
             return jsonify({"erro": "E-mail já cadastrado."}), 409
@@ -73,7 +73,7 @@ def cadastrar():
         conexao.commit()
 
         return jsonify({"mensagem": "Usuário cadastrado com sucesso!"}), 201
-    
+
     except mysql.connector.Error:
         if conexao is not None:
             conexao.rollback()
@@ -135,7 +135,7 @@ def login():
             "mensagem": "Login bem-sucedido!",
             "usuario_id": usuario[0]
         }), 200
-    
+
     except mysql.connector.Error:
         return jsonify({"erro": "Não foi possível realizar o login."}), 500
 
@@ -148,14 +148,42 @@ def login():
 # Verifica se o usuário está logado
 @auth.route("/api/auth/verificar-sessao", methods=["GET"])
 def verificar_sessao():
-    if "usuario_id" in session:
+    if "usuario_id" not in session:
+        return jsonify({"logado": False}), 401
+
+    conexao = None
+    cursor = None
+
+    try:
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+
+        consulta = "SELECT nome FROM usuario WHERE id = %s"
+        cursor.execute(consulta, (session["usuario_id"],))
+
+        usuario = cursor.fetchone()
+
+        if not usuario:
+            session.clear()
+            return jsonify({"logado": False}), 401
+
         return jsonify({
             "logado": True,
-            "usuario_id": session["usuario_id"]
+            "usuario_id": session["usuario_id"],
+            "nome": usuario[0]
         }), 200
-    
-    else:
-        return jsonify({"logado": False}), 401
+
+    except mysql.connector.Error:
+        return jsonify({
+            "erro": "Não foi possível verificar a sessão."
+        }), 500
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if conexao is not None:
+            conexao.close()
 
 # Logout route
 @auth.route("/api/auth/logout", methods=["POST"])
