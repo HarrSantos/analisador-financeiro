@@ -951,79 +951,454 @@ tr.an td:first-child {
   color: var(--mut);
 }
 
-
-/* ---------- Login / Cadastro ---------- */
+/* ==========================================================
+   Login / Cadastro — FinSight
+   ========================================================== */
 
 .auth {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(440px, .85fr);
   min-height: 100vh;
+  background: #F6F8FC;
 }
 
+
+/* ---------- Lado de apresentação ---------- */
+
 .hero {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 48px;
-  background: var(--navy);
+  min-height: 100vh;
+  padding: 42px 56px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(circle at 75% 25%, rgba(37, 99, 235, .22), transparent 34%),
+    radial-gradient(circle at 20% 90%, rgba(37, 99, 235, .12), transparent 35%),
+    var(--navy);
+
   color: #fff;
 }
 
+
+/* ---------- Marca ---------- */
+
+.hero .brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0;
+  color: #fff;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  color: var(--blue);
+}
+
+.brand-mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.brand-name {
+  line-height: 1.15;
+}
+
+.brand-name b {
+  display: block;
+  font-size: 1.08rem;
+  letter-spacing: -.02em;
+}
+
+.brand-name span {
+  display: block;
+  margin-top: 3px;
+  color: #9FB1D3;
+  font-size: .72rem;
+  font-weight: 500;
+}
+
+
+/* ---------- Texto principal ---------- */
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 570px;
+  margin-top: clamp(70px, 12vh, 130px);
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 16px;
+  color: #9FBFFF;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5D8BFF;
+  box-shadow: 0 0 0 5px rgba(93, 139, 255, .12);
+}
+
 .hero h1 {
-  max-width: 16ch;
-  font-size: 2.2rem;
+  max-width: 11ch;
+  font-size: clamp(2.5rem, 4vw, 4.25rem);
+  line-height: 1.04;
+  letter-spacing: -.045em;
 }
 
 .hero p {
-  max-width: 42ch;
+  max-width: 48ch;
+  margin-top: 20px;
   color: #B5C4E2;
+  font-size: .98rem;
+  line-height: 1.7;
 }
 
-/* Ilustração (pontos agrupados e três isolados), desenhada em login.js */
-.hero #viz {
+
+/* ---------- Visualização ---------- */
+
+.hero-visual {
+  position: relative;
+  width: min(560px, 100%);
+  margin: auto auto 10px;
+  padding: 35px 30px 10px;
+}
+
+.visual-card {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+
+  background: rgba(255, 255, 255, .075);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 18px;
+
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, .22),
+    inset 0 1px rgba(255, 255, 255, .05);
+
+  backdrop-filter: blur(14px);
+}
+
+.visual-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  color: #DCE6FA;
+  font-size: .76rem;
+  font-weight: 600;
+}
+
+.visual-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #AFC2E9;
+  font-size: .68rem;
+}
+
+.visual-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #61D5A7;
+  box-shadow: 0 0 0 4px rgba(97, 213, 167, .1);
+}
+
+.visual-chart {
+  margin-top: 22px;
+  color: #6D9AFF;
+}
+
+.visual-chart svg {
+  display: block;
   width: 100%;
-  max-width: 500px;
-  margin-top: 18px;
-  align-self: center;
+  height: auto;
 }
 
-.hero .brand {
-  padding: 0;
+.visual-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 5px;
 }
+
+.visual-stats div {
+  padding-top: 13px;
+  border-top: 1px solid rgba(255, 255, 255, .09);
+}
+
+.visual-stats span {
+  display: block;
+  color: #8295BA;
+  font-size: .66rem;
+}
+
+.visual-stats strong {
+  display: block;
+  margin-top: 3px;
+  color: #F3F7FF;
+  font-size: .95rem;
+}
+
+
+/* ---------- Cards flutuantes ---------- */
+
+.floating-card {
+  position: absolute;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 13px;
+
+  background: rgba(18, 40, 75, .9);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 12px;
+
+  box-shadow: 0 18px 35px rgba(0, 0, 0, .22);
+
+  backdrop-filter: blur(12px);
+}
+
+.floating-card b,
+.floating-card small {
+  display: block;
+}
+
+.floating-card b {
+  color: #EEF4FF;
+  font-size: .68rem;
+}
+
+.floating-card small {
+  margin-top: 2px;
+  color: #91A5CA;
+  font-size: .6rem;
+}
+
+.floating-icon,
+.floating-check {
+  display: grid;
+  place-items: center;
+
+  width: 28px;
+  height: 28px;
+  flex: none;
+
+  border-radius: 9px;
+
+  font-size: .75rem;
+  font-weight: 800;
+}
+
+.floating-icon {
+  background: rgba(248, 113, 113, .12);
+  color: #FF9696;
+}
+
+.floating-check {
+  background: rgba(74, 222, 164, .12);
+  color: #67DDAE;
+}
+
+.floating-card-anomaly {
+  top: 5px;
+  right: 0;
+}
+
+.floating-card-analysis {
+  bottom: 0;
+  left: 0;
+}
+
+
+/* ---------- Área do formulário ---------- */
 
 .panel {
   display: grid;
   place-items: center;
-  padding: 32px;
+  min-height: 100vh;
+  padding: 40px 56px;
+
+  background:
+    radial-gradient(circle at 80% 10%, rgba(37, 99, 235, .05), transparent 30%),
+    #F7F9FC;
 }
 
 .form {
   width: 100%;
-  max-width: 420px;
-  padding: 32px;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  box-shadow: var(--sh);
+  max-width: 430px;
+  padding: 0;
+
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.form-heading {
+  margin-bottom: 30px;
+}
+
+.form-kicker {
+  display: block;
+  margin-bottom: 9px;
+
+  color: var(--blue);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
 }
 
 .form h2 {
-  margin-bottom: 4px;
-  font-size: 1.5rem;
+  margin-bottom: 7px;
+  font-size: 1.85rem;
+  line-height: 1.2;
+  letter-spacing: -.035em;
 }
 
-.sw {
+.form-heading .mut {
+  font-size: .88rem;
+}
+
+
+/* ---------- Campos ---------- */
+
+.fld {
+  display: grid;
+  gap: 7px;
   margin-top: 18px;
+}
+
+.fld label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: #33425E;
+}
+
+.fld input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+
+  border: 1px solid #D5DCE8;
+  border-radius: 11px;
+
+  background: #fff;
+
+  font-size: .88rem;
+
+  box-shadow: 0 1px 2px rgba(15, 37, 71, .025);
+
+  transition:
+    border-color .15s,
+    box-shadow .15s,
+    background .15s;
+}
+
+.fld input::placeholder {
+  color: #A4AEC0;
+}
+
+.fld input:hover {
+  border-color: #BCC7D8;
+}
+
+.fld input:focus {
+  border-color: var(--blue);
+  background: #fff;
+
+  box-shadow:
+    0 0 0 4px rgba(36, 87, 245, .09);
+}
+
+
+/* ---------- Botão ---------- */
+
+.form .wide {
+  min-height: 48px;
+  margin-top: 24px;
+
+  border-radius: 11px;
+
+  background: var(--blue);
+
+  box-shadow:
+    0 7px 16px rgba(36, 87, 245, .18);
+
+  transition:
+    background .15s,
+    transform .15s,
+    box-shadow .15s;
+}
+
+.form .wide:hover {
+  background: var(--blue-d);
+
+  box-shadow:
+    0 9px 20px rgba(36, 87, 245, .22);
+
+  transform: translateY(-1px);
+}
+
+.form .wide:active {
+  transform: translateY(0);
+}
+
+
+/* ---------- Troca entre login/cadastro ---------- */
+
+.sw {
+  margin-top: 22px;
   text-align: center;
 }
+
+.link {
+  margin-left: 3px;
+
+  color: var(--blue);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+
+/* ---------- Mensagens ---------- */
 
 .msg {
   margin-top: 16px;
   padding: 10px 12px;
-  border-radius: var(--rs);
+
+  border-radius: 10px;
+
   background: var(--green-s);
   color: var(--green);
-  font-size: .88rem;
+
+  font-size: .82rem;
   font-weight: 600;
 }
 
@@ -1032,6 +1407,92 @@ tr.an td:first-child {
   color: var(--red);
 }
 
+
+/* ==========================================================
+   Responsivo da autenticação
+   ========================================================== */
+
+@media (max-width: 1000px) {
+
+  .auth {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 32px 32px 42px;
+  }
+
+  .hero-content {
+    margin-top: 65px;
+  }
+
+  .hero h1 {
+    max-width: 14ch;
+    font-size: 2.8rem;
+  }
+
+  .hero-visual {
+    margin-top: 45px;
+  }
+
+  .panel {
+    min-height: auto;
+    padding: 50px 32px 60px;
+  }
+
+}
+
+
+@media (max-width: 620px) {
+
+  .hero {
+    padding: 26px 20px 35px;
+  }
+
+  .hero-content {
+    margin-top: 52px;
+  }
+
+  .hero h1 {
+    max-width: 12ch;
+    font-size: 2.35rem;
+  }
+
+  .hero p {
+    font-size: .88rem;
+  }
+
+  .hero-visual {
+    display: none;
+  }
+
+  .panel {
+    padding: 38px 20px 50px;
+  }
+
+  .form {
+    max-width: 100%;
+  }
+
+  .form h2 {
+    font-size: 1.55rem;
+  }
+
+  .visual-stats {
+    gap: 8px;
+  }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  .form .wide {
+    transition: none;
+  }
+
+}
 
 /* ---------- Responsivo ---------- */
 
@@ -1116,4 +1577,590 @@ tr.an td:first-child {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ==========================================================
+   FinSight — refinamento visual global
+   Sidebar, topbar e identidade das páginas internas
+   ========================================================== */
+
+
+/* ---------- Identidade ---------- */
+
+:root {
+  --navy: #0B2A68;
+  --blue: #2563EB;
+  --blue-d: #1D4ED8;
+  --blue-s: #EEF4FF;
+
+  --bg: #F6F8FC;
+  --line: #E4E9F1;
+
+  --txt: #14213A;
+  --mut: #66738A;
+
+  --r: 16px;
+  --rs: 11px;
+
+  --sh:
+    0 1px 2px rgba(15, 37, 71, .04),
+    0 12px 30px -18px rgba(15, 37, 71, .20);
+}
+
+
+/* ==========================================================
+   Sidebar
+   ========================================================== */
+
+.side {
+  width: 248px;
+
+  padding: 22px 14px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0B2A68 0%,
+      #09245B 100%
+    );
+
+  color: #C7D5EE;
+
+  border-right: 1px solid rgba(255, 255, 255, .04);
+}
+
+
+/* ---------- Logo / marca ---------- */
+
+.side .brand {
+  position: relative;
+
+  gap: 11px;
+
+  margin-bottom: 16px;
+  padding: 5px 10px 22px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+
+  color: #fff;
+}
+
+.side .brand-logo {
+  display: block;
+
+  width: 38px;
+  height: 38px;
+
+  flex: none;
+
+  filter:
+    drop-shadow(0 5px 12px rgba(0, 0, 0, .16));
+}
+
+.side .brand-text {
+  min-width: 0;
+}
+
+.side .brand b {
+  display: block;
+
+  color: #fff;
+
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+
+.side .brand span {
+  display: block;
+
+  max-width: 150px;
+  margin-top: 3px;
+
+  color: #9FB3D8;
+
+  font-size: .68rem;
+  line-height: 1.35;
+}
+
+
+/* ---------- Navegação ---------- */
+
+.side .nav {
+  gap: 5px;
+}
+
+.side .nav a {
+  position: relative;
+
+  min-height: 44px;
+
+  gap: 12px;
+
+  padding: 10px 12px;
+
+  border-radius: 11px;
+
+  color: #B8C8E4;
+
+  font-size: .86rem;
+  font-weight: 600;
+
+  transition:
+    background .15s ease,
+    color .15s ease,
+    transform .15s ease;
+}
+
+.side .nav a .i {
+  width: 18px;
+  height: 18px;
+
+  opacity: .82;
+
+  transition:
+    opacity .15s ease,
+    transform .15s ease;
+}
+
+.side .nav a:hover {
+  background: rgba(255, 255, 255, .07);
+  color: #fff;
+}
+
+.side .nav a:hover .i {
+  opacity: 1;
+  transform: translateX(1px);
+}
+
+
+/* ---------- Item ativo ---------- */
+
+.side .nav a[aria-current] {
+  background:
+    linear-gradient(
+      135deg,
+      #2D6BF3,
+      #2457F5
+    );
+
+  color: #fff;
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, .14);
+}
+
+.side .nav a[aria-current]::before {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+
+  width: 3px;
+
+  border-radius: 0 4px 4px 0;
+
+  background: #fff;
+}
+
+.side .nav a[aria-current] .i {
+  opacity: 1;
+}
+
+
+/* ---------- Sair ---------- */
+
+.side .nav.out {
+  padding-top: 14px;
+
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+.side .nav.out a {
+  color: #9FB1D3;
+}
+
+.side .nav.out a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, .07);
+}
+
+
+/* ==========================================================
+   Área principal
+   ========================================================== */
+
+.main {
+  min-width: 0;
+  background: var(--bg);
+}
+
+
+/* ---------- Topbar ---------- */
+
+.top {
+  min-height: 62px;
+
+  padding: 11px 32px;
+
+  background: rgba(246, 248, 252, .88);
+
+  border-bottom: 1px solid rgba(228, 233, 241, .9);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+
+/* ---------- Breadcrumb ---------- */
+
+.crumbs {
+  gap: 7px;
+
+  color: #7A879B;
+
+  font-size: .78rem;
+}
+
+.crumbs a {
+  color: #68758A;
+
+  font-weight: 500;
+
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  color: var(--blue);
+}
+
+.crumbs b {
+  color: #27354D;
+
+  font-weight: 700;
+}
+
+
+/* ---------- Usuário ---------- */
+
+.user {
+  gap: 9px;
+
+  color: #33415A;
+
+  font-size: .82rem;
+}
+
+.av {
+  width: 36px;
+  height: 36px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #EEF4FF,
+      #E1EAFF
+    );
+
+  border: 1px solid #D8E3FA;
+
+  color: var(--blue-d);
+
+  box-shadow:
+    0 2px 6px rgba(37, 99, 235, .08);
+}
+
+
+/* ==========================================================
+   Conteúdo
+   ========================================================== */
+
+.page {
+  max-width: 1240px;
+
+  padding: 32px 36px 68px;
+
+  gap: 24px;
+}
+
+
+/* ---------- Cabeçalho das páginas ---------- */
+
+.hd h1 {
+  color: #12213A;
+
+  font-size: 1.75rem;
+  letter-spacing: -.035em;
+}
+
+.hd p {
+  margin-top: 6px;
+
+  color: #6C788C;
+
+  font-size: .87rem;
+}
+
+
+/* ---------- Cards ---------- */
+
+.card {
+  border: 1px solid #E3E8F0;
+
+  border-radius: 16px;
+
+  background: #fff;
+
+  box-shadow:
+    0 1px 2px rgba(15, 37, 71, .03),
+    0 12px 30px -22px rgba(15, 37, 71, .20);
+}
+
+.card.pad {
+  padding: 21px;
+}
+
+
+/* ---------- Títulos internos ---------- */
+
+.card h2 {
+  color: #1B2941;
+
+  font-size: .94rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+
+/* ==========================================================
+   Botões
+   ========================================================== */
+
+.btn {
+  min-height: 42px;
+
+  padding: 9px 15px;
+
+  border-radius: 11px;
+
+  background: var(--blue);
+
+  box-shadow:
+    0 5px 12px rgba(37, 99, 235, .14);
+
+  transition:
+    background .15s ease,
+    box-shadow .15s ease,
+    transform .15s ease;
+}
+
+.btn:hover {
+  background: var(--blue-d);
+
+  box-shadow:
+    0 7px 16px rgba(37, 99, 235, .18);
+
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn.ghost {
+  background: #fff;
+
+  border-color: #D5DDE9;
+
+  color: #34425A;
+
+  box-shadow: none;
+}
+
+.btn.ghost:hover {
+  background: #F7F9FC;
+
+  border-color: #C4CFDF;
+
+  box-shadow: none;
+}
+
+
+/* ==========================================================
+   Dashboard — KPIs
+   ========================================================== */
+
+.kpis {
+  gap: 15px;
+}
+
+.kpi {
+  position: relative;
+
+  min-height: 130px;
+
+  padding: 20px 21px;
+
+  overflow: hidden;
+}
+
+.kpi::after {
+  content: '';
+
+  position: absolute;
+
+  right: -25px;
+  top: -30px;
+
+  width: 95px;
+  height: 95px;
+
+  border-radius: 50%;
+
+  background: rgba(37, 99, 235, .045);
+}
+
+.kpi small {
+  position: relative;
+  z-index: 1;
+
+  color: #718097;
+
+  font-size: .74rem;
+  font-weight: 600;
+}
+
+.kpi strong {
+  position: relative;
+  z-index: 1;
+
+  margin: 5px 0 3px;
+
+  color: #172640;
+
+  font-size: 2.05rem;
+  letter-spacing: -.04em;
+}
+
+.kpi .mut {
+  position: relative;
+  z-index: 1;
+
+  color: #8490A3;
+}
+
+
+/* ==========================================================
+   Tabelas
+   ========================================================== */
+
+th {
+  padding: 11px 16px;
+
+  background: #FAFBFD;
+
+  color: #738096;
+
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .025em;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 13px 16px;
+
+  color: #39465B;
+
+  font-size: .84rem;
+}
+
+tbody tr {
+  transition: background .12s ease;
+}
+
+tbody tr:hover {
+  background: #F8FAFD;
+}
+
+.fn {
+  color: #24334B;
+
+  font-weight: 600;
+}
+
+.fn svg {
+  color: var(--blue);
+}
+
+
+/* ==========================================================
+   Menu mobile
+   ========================================================== */
+
+#menu {
+  border-radius: 10px;
+}
+
+
+/* ==========================================================
+   Responsividade da identidade
+   ========================================================== */
+
+@media (max-width: 1100px) {
+
+  .page {
+    padding-left: 26px;
+    padding-right: 26px;
+  }
+
+  .top {
+    padding-left: 26px;
+    padding-right: 26px;
+  }
+
+}
+
+
+@media (max-width: 900px) {
+
+  .side {
+    width: 264px;
+
+    padding: 22px 14px;
+
+    box-shadow:
+      12px 0 40px rgba(4, 18, 45, .18);
+  }
+
+  .top {
+    min-height: 60px;
+
+    padding: 10px 16px;
+  }
+
+  .page {
+    padding: 24px 18px 52px;
+  }
+
+}
+
+
+@media (max-width: 560px) {
+
+  .page {
+    padding: 22px 14px 44px;
+  }
+
+  .hd h1 {
+    font-size: 1.5rem;
+  }
+
+  .card.pad {
+    padding: 17px;
+  }
+
 }

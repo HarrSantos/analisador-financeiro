@@ -7,61 +7,162 @@
 
     <link rel="stylesheet" href="../css/style.css">
 
-    <title>Entrar | Analisador Financeiro</title>
+    <title>FinSight | Entrar</title>
 
     <script src="../js/login.js" defer></script>
   </head>
 
   <body class="auth">
 
-    <!-- Painel de apresentação -->
+    <!-- Apresentação do FinSight -->
     <section class="hero">
 
       <div class="brand">
-        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
-          <rect
-            width="34"
-            height="34"
-            rx="9"
-            fill="#2457F5"
-          />
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 34 34">
+            <rect width="34" height="34" rx="10" fill="currentColor"></rect>
 
-          <path
-            d="M8 23l6-7 5 4 7-9"
-            fill="none"
-            stroke="#fff"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+            <path
+              d="M8 23l6-7 5 4 7-9"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </div>
 
-        <div>
-          <b>Analisador</b>
-          <span>Financeiro</span>
+        <div class="brand-name">
+          <b>FinSight</b>
+          <span>Análise financeira inteligente</span>
         </div>
       </div>
 
-      <h1>
-        Encontre o que foge do padrão nos seus dados.
-      </h1>
 
-      <p>
-        Importe uma planilha CSV e veja quais registros destoam,
-        com o nível de cada anomalia e as estatísticas das colunas.
-      </p>
+      <div class="hero-content">
 
-      <svg
-        id="viz"
-        viewBox="0 0 320 180"
-        role="img"
-        aria-label="Ilustração de análise de dados"
-      ></svg>
+        <span class="hero-eyebrow">
+          Inteligência para seus dados
+        </span>
+
+        <h1>
+          Transforme dados em decisões.
+        </h1>
+
+        <p>
+          Analise seus dados financeiros, encontre padrões e
+          identifique anomalias de forma simples e inteligente.
+        </p>
+
+      </div>
+
+
+      <!-- Ilustração de análise -->
+      <div class="hero-visual">
+
+        <div class="visual-card visual-card-main">
+
+          <div class="visual-header">
+            <span>Visão geral</span>
+
+            <span class="visual-status">
+              <i></i>
+              Analisando
+            </span>
+          </div>
+
+          <div class="visual-chart">
+
+            <svg viewBox="0 0 420 150" aria-hidden="true">
+
+              <defs>
+                <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-opacity=".28"></stop>
+                  <stop offset="100%" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+
+              <path
+                d="M10 125
+                   C45 118 55 105 82 110
+                   S125 88 150 94
+                   S190 70 215 78
+                   S250 45 278 60
+                   S320 35 345 47
+                   S380 25 410 18
+                   L410 150
+                   L10 150 Z"
+                fill="url(#chart-fill)"
+              ></path>
+
+              <path
+                d="M10 125
+                   C45 118 55 105 82 110
+                   S125 88 150 94
+                   S190 70 215 78
+                   S250 45 278 60
+                   S320 35 345 47
+                   S380 25 410 18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+              ></path>
+
+              <circle cx="410" cy="18" r="5" fill="currentColor"></circle>
+
+            </svg>
+
+          </div>
+
+          <div class="visual-stats">
+
+            <div>
+              <span>Registros</span>
+              <strong>2.480</strong>
+            </div>
+
+            <div>
+              <span>Anomalias</span>
+              <strong>18</strong>
+            </div>
+
+            <div>
+              <span>Precisão</span>
+              <strong>94%</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="floating-card floating-card-anomaly">
+          <span class="floating-icon">!</span>
+
+          <div>
+            <b>Anomalia detectada</b>
+            <small>Valor acima do padrão</small>
+          </div>
+        </div>
+
+
+        <div class="floating-card floating-card-analysis">
+          <span class="floating-check">✓</span>
+
+          <div>
+            <b>Análise concluída</b>
+            <small>Dados processados</small>
+          </div>
+        </div>
+
+      </div>
 
     </section>
 
 
-    <!-- Login e Cadastro vivem na mesma página -->
+    <!-- Área de autenticação -->
     <section class="panel">
 
       <div class="form">
@@ -69,44 +170,66 @@
         <!-- Login -->
         <form id="f-login" aria-labelledby="t-l">
 
-          <h2 id="t-l">
-            Entrar na sua conta
-          </h2>
+          <div class="form-heading">
 
-          <p class="mut">
-            Use seu e-mail e senha para continuar.
-          </p>
+            <span class="form-kicker">
+              Acesso
+            </span>
+
+            <h2 id="t-l">
+              Bem-vindo ao FinSight
+            </h2>
+
+            <p class="mut">
+              Entre na sua conta para continuar.
+            </p>
+
+          </div>
+
 
           <div class="fld">
-            <label for="le">E-mail</label>
+
+            <label for="le">
+              E-mail
+            </label>
 
             <input
               id="le"
               type="email"
               autocomplete="email"
               maxlength="255"
+              placeholder="seu@email.com"
               required
             >
+
           </div>
 
+
           <div class="fld">
-            <label for="ls">Senha</label>
+
+            <label for="ls">
+              Senha
+            </label>
 
             <input
               id="ls"
               type="password"
               autocomplete="current-password"
               maxlength="128"
+              placeholder="Digite sua senha"
               required
             >
+
           </div>
+
 
           <button class="btn wide">
             Entrar
           </button>
 
+
           <p class="sw mut sm">
-            Ainda não tem conta?
+            Ainda não tem uma conta?
 
             <button
               type="button"
@@ -127,65 +250,99 @@
           hidden
         >
 
-          <h2 id="t-c">
-            Crie sua conta
-          </h2>
+          <div class="form-heading">
 
-          <p class="mut">
-            Informe seus dados para começar.
-          </p>
+            <span class="form-kicker">
+              Comece agora
+            </span>
+
+            <h2 id="t-c">
+              Crie sua conta
+            </h2>
+
+            <p class="mut">
+              Cadastre-se para começar a analisar seus dados.
+            </p>
+
+          </div>
+
 
           <div class="fld">
-            <label for="cn">Nome</label>
+
+            <label for="cn">
+              Nome
+            </label>
 
             <input
               id="cn"
               type="text"
               autocomplete="name"
               maxlength="120"
+              placeholder="Seu nome"
               required
             >
+
           </div>
 
+
           <div class="fld">
-            <label for="ce">E-mail</label>
+
+            <label for="ce">
+              E-mail
+            </label>
 
             <input
               id="ce"
               type="email"
               autocomplete="email"
               maxlength="255"
+              placeholder="seu@email.com"
               required
             >
+
           </div>
 
+
           <div class="fld">
-            <label for="cs">Senha</label>
+
+            <label for="cs">
+              Senha
+            </label>
 
             <input
               id="cs"
               type="password"
               autocomplete="new-password"
               maxlength="128"
+              placeholder="Crie uma senha"
               required
             >
+
           </div>
 
+
           <div class="fld">
-            <label for="ccs">Confirmar senha</label>
+
+            <label for="ccs">
+              Confirmar senha
+            </label>
 
             <input
               id="ccs"
               type="password"
               autocomplete="new-password"
               maxlength="128"
+              placeholder="Digite a senha novamente"
               required
             >
+
           </div>
+
 
           <button class="btn wide">
             Criar conta
           </button>
+
 
           <p
             class="msg"
@@ -196,8 +353,9 @@
             Conta criada. Agora é só entrar.
           </p>
 
+
           <p class="sw mut sm">
-            Já tem conta?
+            Já tem uma conta?
 
             <button
               type="button"
