@@ -311,29 +311,11 @@ function renderizarPaginacao(
    ========================================================== */
 
 const LOGO_SVG = `
-  <svg
+  <img
     class="brand-logo"
-    width="38"
-    height="38"
-    viewBox="0 0 38 38"
-    aria-hidden="true"
-  >
-    <rect
-      width="38"
-      height="38"
-      rx="11"
-      fill="#2563EB"
-    />
-
-    <path
-      d="M9 26l6.5-8 5.5 4.5L29 12"
-      fill="none"
-      stroke="#fff"
-      stroke-width="2.8"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
+    src="../assets/finsight-mark.png"
+    alt="FinSight"
+  />
 `;
 
 

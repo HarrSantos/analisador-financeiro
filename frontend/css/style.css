@@ -10,10 +10,10 @@
 /* ---------- Variáveis ---------- */
 
 :root {
-  --navy: #0F2547;
-  --blue: #2457F5;
-  --blue-d: #1B43C4;
-  --blue-s: #E9EFFE;
+  --navy: #24113F;
+  --blue: #7C3AED;
+  --blue-d: #6D28D9;
+  --blue-s: #F0E9FF;
   --bg: #F3F5F9;
   --line: #E3E8F0;
   --txt: #14213A;
@@ -491,11 +491,20 @@ select {
 
 .tw {
   position: relative;
+  max-height: 420px;
   overflow-x: auto;
+  overflow-y: auto;
 }
 
 .tw table {
   min-width: 620px;
+}
+
+.tw thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #FAFBFD;
 }
 
 table {
@@ -1588,10 +1597,10 @@ tr.an td:first-child {
 /* ---------- Identidade ---------- */
 
 :root {
-  --navy: #0B2A68;
-  --blue: #2563EB;
-  --blue-d: #1D4ED8;
-  --blue-s: #EEF4FF;
+  --navy: #24113F;
+  --blue: #7C3AED;
+  --blue-d: #6D28D9;
+  --blue-s: #F0E9FF;
 
   --bg: #F6F8FC;
   --line: #E4E9F1;
@@ -1620,8 +1629,8 @@ tr.an td:first-child {
   background:
     linear-gradient(
       180deg,
-      #0B2A68 0%,
-      #09245B 100%
+      #460b68 0%,
+      #41095b 100%
     );
 
   color: #C7D5EE;
@@ -1740,8 +1749,8 @@ tr.an td:first-child {
   background:
     linear-gradient(
       135deg,
-      #2D6BF3,
-      #2457F5
+      #8B5CF6,
+      #6D28D9
     );
 
   color: #fff;
@@ -2163,4 +2172,24 @@ tbody tr:hover {
     padding: 17px;
   }
 
+}
+
+.brand-logo {
+  display: block;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.auth-logo {
+  display: block;
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 760px) {
+  .auth-logo {
+    width: 145px;
+  }
 }

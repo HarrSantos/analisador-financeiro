@@ -1,90 +1,70 @@
 <!doctype html>
 <html lang="pt-BR">
 
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 
-    <title>FinSight | Entrar</title>
+  <title>FinSight | Entrar</title>
 
-    <script src="../js/login.js" defer></script>
-  </head>
+  <script src="../js/login.js" defer></script>
+</head>
 
-  <body class="auth">
+<body class="auth">
 
-    <!-- Apresentação do FinSight -->
-    <section class="hero">
+  <!-- Apresentação do FinSight -->
+  <section class="hero">
 
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 34 34">
-            <rect width="34" height="34" rx="10" fill="currentColor"></rect>
+    <div class="brand">
+      <img class="auth-logo" src="../assets/finsight-logo.png" alt="FinSight">
+    </div>
 
-            <path
-              d="M8 23l6-7 5 4 7-9"
-              fill="none"
-              stroke="#fff"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            ></path>
-          </svg>
+    <div class="hero-content">
+
+      <span class="hero-eyebrow">
+        Inteligência para seus dados
+      </span>
+
+      <h1>
+        Transforme dados em decisões.
+      </h1>
+
+      <p>
+        Analise seus dados financeiros, encontre padrões e
+        identifique anomalias de forma simples e inteligente.
+      </p>
+
+    </div>
+
+
+    <!-- Ilustração de análise -->
+    <div class="hero-visual">
+
+      <div class="visual-card visual-card-main">
+
+        <div class="visual-header">
+          <span>Visão geral</span>
+
+          <span class="visual-status">
+            <i></i>
+            Analisando
+          </span>
         </div>
 
-        <div class="brand-name">
-          <b>FinSight</b>
-          <span>Análise financeira inteligente</span>
-        </div>
-      </div>
+        <div class="visual-chart">
 
+          <svg viewBox="0 0 420 150" aria-hidden="true">
 
-      <div class="hero-content">
+            <defs>
+              <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-opacity=".28"></stop>
+                <stop offset="100%" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
 
-        <span class="hero-eyebrow">
-          Inteligência para seus dados
-        </span>
-
-        <h1>
-          Transforme dados em decisões.
-        </h1>
-
-        <p>
-          Analise seus dados financeiros, encontre padrões e
-          identifique anomalias de forma simples e inteligente.
-        </p>
-
-      </div>
-
-
-      <!-- Ilustração de análise -->
-      <div class="hero-visual">
-
-        <div class="visual-card visual-card-main">
-
-          <div class="visual-header">
-            <span>Visão geral</span>
-
-            <span class="visual-status">
-              <i></i>
-              Analisando
-            </span>
-          </div>
-
-          <div class="visual-chart">
-
-            <svg viewBox="0 0 420 150" aria-hidden="true">
-
-              <defs>
-                <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-opacity=".28"></stop>
-                  <stop offset="100%" stop-opacity="0"></stop>
-                </linearGradient>
-              </defs>
-
-              <path
-                d="M10 125
+            <path d="M10 125
                    C45 118 55 105 82 110
                    S125 88 150 94
                    S190 70 215 78
@@ -92,286 +72,222 @@
                    S320 35 345 47
                    S380 25 410 18
                    L410 150
-                   L10 150 Z"
-                fill="url(#chart-fill)"
-              ></path>
+                   L10 150 Z" fill="url(#chart-fill)"></path>
 
-              <path
-                d="M10 125
+            <path d="M10 125
                    C45 118 55 105 82 110
                    S125 88 150 94
                    S190 70 215 78
                    S250 45 278 60
                    S320 35 345 47
-                   S380 25 410 18"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-              ></path>
+                   S380 25 410 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
 
-              <circle cx="410" cy="18" r="5" fill="currentColor"></circle>
+            <circle cx="410" cy="18" r="5" fill="currentColor"></circle>
 
-            </svg>
-
-          </div>
-
-          <div class="visual-stats">
-
-            <div>
-              <span>Registros</span>
-              <strong>2.480</strong>
-            </div>
-
-            <div>
-              <span>Anomalias</span>
-              <strong>18</strong>
-            </div>
-
-            <div>
-              <span>Precisão</span>
-              <strong>94%</strong>
-            </div>
-
-          </div>
+          </svg>
 
         </div>
 
-
-        <div class="floating-card floating-card-anomaly">
-          <span class="floating-icon">!</span>
+        <div class="visual-stats">
 
           <div>
-            <b>Anomalia detectada</b>
-            <small>Valor acima do padrão</small>
+            <span>Registros</span>
+            <strong>2.480</strong>
           </div>
-        </div>
-
-
-        <div class="floating-card floating-card-analysis">
-          <span class="floating-check">✓</span>
 
           <div>
-            <b>Análise concluída</b>
-            <small>Dados processados</small>
+            <span>Anomalias</span>
+            <strong>18</strong>
           </div>
+
+          <div>
+            <span>Precisão</span>
+            <strong>94%</strong>
+          </div>
+
         </div>
 
       </div>
 
-    </section>
+
+      <div class="floating-card floating-card-anomaly">
+        <span class="floating-icon">!</span>
+
+        <div>
+          <b>Anomalia detectada</b>
+          <small>Valor acima do padrão</small>
+        </div>
+      </div>
 
 
-    <!-- Área de autenticação -->
-    <section class="panel">
+      <div class="floating-card floating-card-analysis">
+        <span class="floating-check">✓</span>
 
-      <div class="form">
+        <div>
+          <b>Análise concluída</b>
+          <small>Dados processados</small>
+        </div>
+      </div>
 
-        <!-- Login -->
-        <form id="f-login" aria-labelledby="t-l">
+    </div>
 
-          <div class="form-heading">
-
-            <span class="form-kicker">
-              Acesso
-            </span>
-
-            <h2 id="t-l">
-              Bem-vindo ao FinSight
-            </h2>
-
-            <p class="mut">
-              Entre na sua conta para continuar.
-            </p>
-
-          </div>
+  </section>
 
 
-          <div class="fld">
+  <!-- Área de autenticação -->
+  <section class="panel">
 
-            <label for="le">
-              E-mail
-            </label>
+    <div class="form">
 
-            <input
-              id="le"
-              type="email"
-              autocomplete="email"
-              maxlength="255"
-              placeholder="seu@email.com"
-              required
-            >
+      <!-- Login -->
+      <form id="f-login" aria-labelledby="t-l">
 
-          </div>
+        <div class="form-heading">
 
+          <span class="form-kicker">
+            Acesso
+          </span>
 
-          <div class="fld">
+          <h2 id="t-l">
+            Bem-vindo ao FinSight
+          </h2>
 
-            <label for="ls">
-              Senha
-            </label>
-
-            <input
-              id="ls"
-              type="password"
-              autocomplete="current-password"
-              maxlength="128"
-              placeholder="Digite sua senha"
-              required
-            >
-
-          </div>
-
-
-          <button class="btn wide">
-            Entrar
-          </button>
-
-
-          <p class="sw mut sm">
-            Ainda não tem uma conta?
-
-            <button
-              type="button"
-              class="link"
-              data-modo="cadastro"
-            >
-              Criar conta
-            </button>
+          <p class="mut">
+            Entre na sua conta para continuar.
           </p>
 
-        </form>
+        </div>
 
 
-        <!-- Cadastro -->
-        <form
-          id="f-cad"
-          aria-labelledby="t-c"
-          hidden
-        >
+        <div class="fld">
 
-          <div class="form-heading">
+          <label for="le">
+            E-mail
+          </label>
 
-            <span class="form-kicker">
-              Comece agora
-            </span>
+          <input id="le" type="email" autocomplete="email" maxlength="255" placeholder="seu@email.com" required>
 
-            <h2 id="t-c">
-              Crie sua conta
-            </h2>
-
-            <p class="mut">
-              Cadastre-se para começar a analisar seus dados.
-            </p>
-
-          </div>
+        </div>
 
 
-          <div class="fld">
+        <div class="fld">
 
-            <label for="cn">
-              Nome
-            </label>
+          <label for="ls">
+            Senha
+          </label>
 
-            <input
-              id="cn"
-              type="text"
-              autocomplete="name"
-              maxlength="120"
-              placeholder="Seu nome"
-              required
-            >
+          <input id="ls" type="password" autocomplete="current-password" maxlength="128" placeholder="Digite sua senha"
+            required>
 
-          </div>
+        </div>
 
 
-          <div class="fld">
-
-            <label for="ce">
-              E-mail
-            </label>
-
-            <input
-              id="ce"
-              type="email"
-              autocomplete="email"
-              maxlength="255"
-              placeholder="seu@email.com"
-              required
-            >
-
-          </div>
+        <button class="btn wide">
+          Entrar
+        </button>
 
 
-          <div class="fld">
+        <p class="sw mut sm">
+          Ainda não tem uma conta?
 
-            <label for="cs">
-              Senha
-            </label>
-
-            <input
-              id="cs"
-              type="password"
-              autocomplete="new-password"
-              maxlength="128"
-              placeholder="Crie uma senha"
-              required
-            >
-
-          </div>
-
-
-          <div class="fld">
-
-            <label for="ccs">
-              Confirmar senha
-            </label>
-
-            <input
-              id="ccs"
-              type="password"
-              autocomplete="new-password"
-              maxlength="128"
-              placeholder="Digite a senha novamente"
-              required
-            >
-
-          </div>
-
-
-          <button class="btn wide">
+          <button type="button" class="link" data-modo="cadastro">
             Criar conta
           </button>
+        </p>
+
+      </form>
 
 
-          <p
-            class="msg"
-            id="ok"
-            role="status"
-            hidden
-          >
-            Conta criada. Agora é só entrar.
+      <!-- Cadastro -->
+      <form id="f-cad" aria-labelledby="t-c" hidden>
+
+        <div class="form-heading">
+
+          <span class="form-kicker">
+            Comece agora
+          </span>
+
+          <h2 id="t-c">
+            Crie sua conta
+          </h2>
+
+          <p class="mut">
+            Cadastre-se para começar a analisar seus dados.
           </p>
 
+        </div>
 
-          <p class="sw mut sm">
-            Já tem uma conta?
 
-            <button
-              type="button"
-              class="link"
-              data-modo="login"
-            >
-              Entrar
-            </button>
-          </p>
+        <div class="fld">
 
-        </form>
+          <label for="cn">
+            Nome
+          </label>
 
-      </div>
+          <input id="cn" type="text" autocomplete="name" maxlength="120" placeholder="Seu nome" required>
 
-    </section>
+        </div>
 
-  </body>
+
+        <div class="fld">
+
+          <label for="ce">
+            E-mail
+          </label>
+
+          <input id="ce" type="email" autocomplete="email" maxlength="255" placeholder="seu@email.com" required>
+
+        </div>
+
+
+        <div class="fld">
+
+          <label for="cs">
+            Senha
+          </label>
+
+          <input id="cs" type="password" autocomplete="new-password" maxlength="128" placeholder="Crie uma senha"
+            required>
+
+        </div>
+
+
+        <div class="fld">
+
+          <label for="ccs">
+            Confirmar senha
+          </label>
+
+          <input id="ccs" type="password" autocomplete="new-password" maxlength="128"
+            placeholder="Digite a senha novamente" required>
+
+        </div>
+
+
+        <button class="btn wide">
+          Criar conta
+        </button>
+
+
+        <p class="msg" id="ok" role="status" hidden>
+          Conta criada. Agora é só entrar.
+        </p>
+
+
+        <p class="sw mut sm">
+          Já tem uma conta?
+
+          <button type="button" class="link" data-modo="login">
+            Entrar
+          </button>
+        </p>
+
+      </form>
+
+    </div>
+
+  </section>
+
+</body>
 
 </html>
