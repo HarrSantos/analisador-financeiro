@@ -2,6 +2,7 @@ import json
 
 from backend.database import conectar_banco
 
+
 def salvar_importacao(
         usuario_id: int,
         nome_arquivo: str,
@@ -17,6 +18,7 @@ def salvar_importacao(
         conexao = conectar_banco()
         cursor = conexao.cursor()
 
+        # Cria o registro da importação
         consulta = """
             INSERT INTO importacao (usuario_id, nome_arquivo)
             VALUES (%s, %s)
@@ -28,34 +30,66 @@ def salvar_importacao(
         )
 
         importacao_id = cursor.lastrowid
+
+        # Prepara os registros
         valores_registros = []
+
         for numero_linha, registro in enumerate(registros, start=1):
-            valores_registros.append(
-                (importacao_id, numero_linha, json.dumps(registro))
-            )
+            valores_registros.append((
+                importacao_id,
+                numero_linha,
+                json.dumps(registro, ensure_ascii=False)
+            ))
 
         consulta_registros = """
-            INSERT INTO registro (importacao_id, numero_linha, dados)
+            INSERT INTO registro
+                (importacao_id, numero_linha, dados)
             VALUES (%s, %s, %s)
         """
 
-        cursor.executemany(consulta_registros, valores_registros)
+        # Insere os registros em lotes de 500
+        TAMANHO_LOTE = 500
 
+        for inicio in range(0, len(valores_registros), TAMANHO_LOTE):
+            lote = valores_registros[
+                inicio:inicio + TAMANHO_LOTE
+            ]
+
+            cursor.executemany(
+                consulta_registros,
+                lote
+            )
+
+        # Confirma tudo somente depois de inserir todos os lotes
         conexao.commit()
+
         return importacao_id
-    
+
     except Exception as erro:
+
+        # Tenta desfazer a transação, caso a conexão ainda exista
         if conexao is not None:
-            conexao.rollback()
+            try:
+                conexao.rollback()
+            except Exception:
+                pass
+
         raise RuntimeError(
             "Não foi possível salvar a importação no banco de dados."
         ) from erro
-    
+
     finally:
         if cursor is not None:
-            cursor.close()
+            try:
+                cursor.close()
+            except Exception:
+                pass
+
         if conexao is not None:
-            conexao.close()
+            try:
+                conexao.close()
+            except Exception:
+                pass
 
 def listar_importacoes(usuario_id: int) -> list[dict]:
     conexao = None

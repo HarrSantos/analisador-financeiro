@@ -56,9 +56,12 @@ def importar_csv():
             registros=registros
         )
 
-    except Exception:
+    except Exception as erro:
+        import traceback
+        traceback.print_exc()
+
         return jsonify({
-            "erro": "Não foi possível salvar a importação no banco de dados."
+            "erro": str(erro)
         }), 500
 
     return jsonify({
